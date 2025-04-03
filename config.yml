@@ -1,0 +1,23 @@
+server:
+  host: "localhost"
+  port: "2222"
+
+mysql:
+  host: "127.0.0.1"
+  username: "root"
+  password: "zeldoris"
+  database: "TeamSpeak"
+
+companyIp:
+  Nedx-Server: "127.0.0.1"
+  Faramizban: "162.222.222"
+
+https:
+  useHttps: "0"
+  cert: "./certs/example.crt"
+  key: "./certs/example.key"
+
+cron:
+  time: "* * * * *"
+  time2: "*/20 * * * *"
+  time3: "*/20 * * * *"
