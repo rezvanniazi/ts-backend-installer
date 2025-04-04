@@ -199,7 +199,6 @@ install_panel() {
 		tar -xvzf TeaSpeak-files.tar.gz
 		rm -rf TeaSpeak-files.tar.gz
 	fi
-	clear
 
 
 	echo -e "${green}Ip backend shoma: https://$domain_name:$backend_port${plain}"
