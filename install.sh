@@ -179,9 +179,33 @@ install_panel() {
 	touch .env
 
 	echo PATH_TO_PARENT_TS=/home/mtxpanel/server > .env
+
+	cp mtxpanel.service /etc/systemd/system/
+
+	systemctl enable mtxpanel
+	systemctl start mtxpanel
+
+	if ([[ -e /home/mtxpanel/server ]]); then
+		echo "Server Folder Already Exists"
+	else
+		mkdir -p /home/mtxpanel
+		mkdir /home/mtxpanel/server
+
+		cd /home/mtxpanel/server
+
+		wget -4 -O TeaSpeak-files.tar.gz https://github.com/rezvanniazi/ts-backend-installer/blob/main/TeaSpeak-files.tar.gz
+		
+		tar -xvzf TeaSpeak-files.tar.gz
+		rm -rf TeaSpeak-files.tar.gz
+	fi
+	clear
+
+
+	echo -e "${green}Ip backend shoma: https://$domain_name:$backend_port"
 	
+	echo -e "${yellow} Lotfan protocol_key.txt khod ra dakhele posheye /home/mtxpanel/server/ gharar dahid"
 
-
+	exit 0
 }
 
 
