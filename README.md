@@ -1,3 +1,3 @@
 # ts-backend-installer
 
-tar -czvf mtxpanel-linux-x64.tar.gz -C dist/ .
+bash <(curl -Ls https://raw.githubusercontent.com/rezvanniazi/ts-backend-installer/main/install.sh)

@@ -91,7 +91,6 @@ install_base() {
         apt-get update && apt install -y -q wget curl tar mariadb redis-server certbot
         ;;
     esac
-	snap install yq
 }
 
 install_panel() {
@@ -154,7 +153,7 @@ install_panel() {
 		exit 1
 	fi
 
-	curl -L -H "Authorization: Bearer ${github_token}"   -H "Accept: application/octet-stream"   https://api.github.com/repos/rezvanniazi/ts-panel-backend2/releases/assets/${asset_id} -O mtxpanel-linux-x64.tar.gz
+	curl -L -H "Authorization: Bearer ${github_token}"   -H "Accept: application/octet-stream"   https://api.github.com/repos/rezvanniazi/ts-panel-backend2/releases/assets/${asset_id} --output mtxpanel-linux-x64.tar.gz
 
 
 	if [[ $? -ne 0 ]]; then
