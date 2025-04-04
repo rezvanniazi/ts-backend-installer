@@ -197,7 +197,7 @@ install_panel() {
 
 		cd /home/mtxpanel/server
 
-		wget -4 -O TeaSpeak-files.tar.gz https://github.com/rezvanniazi/ts-backend-installer/blob/main/TeaSpeak-files.tar.gz
+		wget -4 --output TeaSpeak-files.tar.gz https://github.com/rezvanniazi/ts-backend-installer/blob/main/TeaSpeak-files.tar.gz
 		
 		tar -xvzf TeaSpeak-files.tar.gz
 		rm -rf TeaSpeak-files.tar.gz
