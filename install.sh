@@ -161,7 +161,9 @@ install_panel() {
             exit 1
     fi
 	
-	tar -xvzf mtxpanel-linux-x64.tar.gz
+	mkdir -p mtxpanel-linux-x64
+
+	tar -xvzf mtxpanel-linux-x64.tar.gz -C mtxpanel-linux-x64
 	wait
 
 	cd mtxpanel-linux-x64
@@ -200,9 +202,9 @@ install_panel() {
 	clear
 
 
-	echo -e "${green}Ip backend shoma: https://$domain_name:$backend_port"
+	echo -e "${green}Ip backend shoma: https://$domain_name:$backend_port${plain}"
 	
-	echo -e "${yellow} Lotfan protocol_key.txt khod ra dakhele posheye /home/mtxpanel/server/ gharar dahid"
+	echo -e "${yellow} Lotfan protocol_key.txt khod ra dakhele posheye /home/mtxpanel/server/ gharar dahid${plain}"
 
 	exit 0
 }
