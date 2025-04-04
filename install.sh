@@ -104,6 +104,7 @@ install_panel() {
 
 	if ([[ -e /usr/local/mtxpanel-linux-x64 ]]); then
 		cd mtxpanel-linux-x64
+		systemctl stop mtxpanel
 		backend_port=$(grep 'port:' config.yml | awk -F': ' '{print $2}' | tr -d '"')
 		mysql_username=$(grep 'username:' config.yml | awk -F': ' '{print $2}' | tr -d '"')
 		mysql_password=$(grep 'password:' config.yml | awk -F': ' '{print $2}' | tr -d '"')
