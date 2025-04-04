@@ -176,7 +176,7 @@ install_panel() {
 	ln -s /etc/letsencrypt/live/$domain_name/privkey.pem certs/
 
 	sed -i "s/port: \"9686\"/port: \"$backend_port\"/g" config.yml
-	sed -i "s/server: \"localhost\"/server: \"$server_ipv4\"/g" config.yml
+	sed -i "s/host: \"localhost\"/host: \"$server_ipv4\"/g" config.yml
 	sed -i "s/username: \"temp\"/username: \"$mysql_username\"/g" config.yml
 	sed -i "s/password: \"temp\"/password: \"$mysql_password\"/g" config.yml
 	sed -i "s/database: \"temp\"/database: \"$mysql_database\"/g" config.yml
