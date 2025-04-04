@@ -42,10 +42,10 @@ read -p "ip khod ra vared konid ya Enter bezanid [$default_ip]: " user_input
 
 
 # Use the default value if the user input is empty
-ipv4="${user_input:-$default_ip}"
+server_ipv4="${user_input:-$default_ip}"
 
 # Output the final IP address
-echo "The IP address is: $ipv4"
+echo "The IP address is: $server_ipv4"
 
 
 
@@ -73,22 +73,22 @@ fi
 install_base() {
     case "${release}" in
     ubuntu | debian | armbian)
-        apt-get update && apt-get install -y -q wget curl tar mariadb-server redis-server certbot
+        apt-get update && apt-get install -y -q wget curl tar mariadb-server redis-server certbot jq
         ;;
     centos | almalinux | rocky | ol)
-        yum -y update && yum install -y -q wget curl tar mariadb-server redis-server certbot
+        yum -y update && yum install -y -q wget curl tar mariadb-server redis-server certbot jq
         ;;
     fedora | amzn | virtuozzo)
-        dnf -y update && dnf install -y -q wget curl tar mariadb-server  redis-server certbot
+        dnf -y update && dnf install -y -q wget curl tar mariadb-server  redis-server certbot jq
         ;;
     arch | manjaro | parch)
-        pacman -Syu && pacman -Syu --noconfirm wget curl tar mariadb-server  redis-server certbot
+        pacman -Syu && pacman -Syu --noconfirm wget curl tar mariadb-server  redis-server certbot jq
         ;;
     opensuse-tumbleweed)
-        zypper refresh && zypper -q install -y wget curl tar mariadb-server  redis-server certbot
+        zypper refresh && zypper -q install -y wget curl tar mariadb-server  redis-server certbot jq
         ;;
     *)
-        apt-get update && apt install -y -q wget curl tar mariadb-server  redis-server certbot
+        apt-get update && apt install -y -q wget curl tar mariadb-server  redis-server certbot jq
         ;;
     esac
 }
@@ -176,7 +176,7 @@ install_panel() {
 	ln -s /etc/letsencrypt/live/$domain_name/privkey.pem certs/
 
 	sed -i "s/port: \"9686\"/port: \"$backend_port\"/g" config.yml
-	sed -i "s/server: \"localhost\"/server: \"$ipv4\"/g" config.yml
+	sed -i "s/server: \"localhost\"/server: \"$server_ipv4\"/g" config.yml
 	sed -i "s/username: \"temp\"/username: \"$mysql_username\"/g" config.yml
 	sed -i "s/password: \"temp\"/password: \"$mysql_password\"/g" config.yml
 	sed -i "s/database: \"temp\"/database: \"$mysql_database\"/g" config.yml
