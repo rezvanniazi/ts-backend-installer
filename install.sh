@@ -114,6 +114,7 @@ install_panel() {
 		read -p "Port backend vared konid: " backend_port
 		read -p "lotfan user mysql ra vared konid: " mysql_username
 		read -p "lotfan password mysql ra vared konid: " mysql_password
+		read -p "lotfan esm database mysql ra vared konid: " mysql_database
 	fi
 
 	mysql -e "drop USER '${mysql_username}'@'localhost'" &
@@ -168,12 +169,14 @@ install_panel() {
 
 	cd mtxpanel-linux-x64
 
+	mkdir -p certs
+
 	ln -s /etc/letsencrypt/live/$domain_name/fullchain.pem certs/
 	ln -s /etc/letsencrypt/live/$domain_name/privkey.pem certs/
 
 	sed -i "s/port: \"9686\"/port: \"$backend_port\"/g" config.yml
 	sed -i "s/server: \"localhost\"/server: \"$ipv4\"/g" config.yml
-	sed -i "s/username: \"temp\"/server: \"$mysql_username\"/g" config.yml
+	sed -i "s/username: \"temp\"/username: \"$mysql_username\"/g" config.yml
 	sed -i "s/password: \"temp\"/password: \"$mysql_password\"/g" config.yml
 	sed -i "s/database: \"temp\"/database: \"$mysql_database\"/g" config.yml
 
