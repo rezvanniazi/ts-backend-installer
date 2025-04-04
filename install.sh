@@ -76,19 +76,19 @@ install_base() {
         apt-get update && apt-get install -y -q wget curl tar mariadb-server redis-server certbot
         ;;
     centos | almalinux | rocky | ol)
-        yum -y update && yum install -y -q wget curl tar mariadb redis-server certbot
+        yum -y update && yum install -y -q wget curl tar mariadb-server redis-server certbot
         ;;
     fedora | amzn | virtuozzo)
-        dnf -y update && dnf install -y -q wget curl tar mariadb redis-server certbot
+        dnf -y update && dnf install -y -q wget curl tar mariadb-server  redis-server certbot
         ;;
     arch | manjaro | parch)
-        pacman -Syu && pacman -Syu --noconfirm wget curl tar mariadb redis-server certbot
+        pacman -Syu && pacman -Syu --noconfirm wget curl tar mariadb-server  redis-server certbot
         ;;
     opensuse-tumbleweed)
-        zypper refresh && zypper -q install -y wget curl tar mariadb redis-server certbot
+        zypper refresh && zypper -q install -y wget curl tar mariadb-server  redis-server certbot
         ;;
     *)
-        apt-get update && apt install -y -q wget curl tar mariadb redis-server certbot
+        apt-get update && apt install -y -q wget curl tar mariadb-server  redis-server certbot
         ;;
     esac
 }
@@ -198,7 +198,7 @@ install_panel() {
 
 		cd /home/mtxpanel/server
 
-		wget -4 --output TeaSpeak-files.tar.gz https://github.com/rezvanniazi/ts-backend-installer/blob/main/TeaSpeak-files.tar.gz
+		wget -4 -O TeaSpeak-files.tar.gz https://raw.githubusercontent.com/rezvanniazi/ts-backend-installer/main/TeaSpeak-files.tar.gz
 		
 		tar -xvzf TeaSpeak-files.tar.gz
 		rm -rf TeaSpeak-files.tar.gz
@@ -206,8 +206,11 @@ install_panel() {
 
 
 	echo -e "${green}Ip backend shoma: https://$domain_name:$backend_port${plain}"
-	
-	echo -e "${yellow} Lotfan protocol_key.txt khod ra dakhele posheye /home/mtxpanel/server/ gharar dahid${plain}"
+	echo -e "${green}User Admin: admin${plain}"
+	echo -e "${green}Password Admin: admin${plain}"
+
+	echo -e "${red}Lotfan Company v user jadid besazid v user admin ro pak konid${plain}"
+
 
 	exit 0
 }
