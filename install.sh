@@ -192,26 +192,23 @@ install_panel() {
 	ln -s /etc/letsencrypt/live/$domain_name/fullchain.pem certs/
 	ln -s /etc/letsencrypt/live/$domain_name/privkey.pem certs/
 
-	echo "Creating new .env configuration file..."
-	cat > /usr/local/mtxpanel-linux-x64/.env << EOF
-	NODE_ENV="production"
+cat > /usr/local/mtxpanel-linux-x64/.env << EOF
+NODE_ENV="production"
 
-	PORT=$backend_port
-	JWT_SECRET=$(openssl rand -base64 32)
-	JWT_REFRESH=$(openssl rand -base64 32)
+PORT=$backend_port
+JWT_SECRET=$(openssl rand -base64 32)
+JWT_REFRESH=$(openssl rand -base64 32)
 
+MYSQL_HOST="localhost"
+MYSQL_USERNAME="$mysql_username"
+MYSQL_PASSWORD="$mysql_password"
+MYSQL_DATABASE="$mysql_database"
 
-	MYSQL_HOST="localhost"
-	MYSQL_USERNAME="$mysql_username"
-	MYSQL_PASSWORD="$mysql_password"
-	MYSQL_DATABASE="$mysql_database"
+EXPIRATION_CHECK="*/10 * * * *"
+PANEL_SYNC_CHECK="* * * * *"
+TEAMSPEAK_CHECK="* * * * *"
 
-	EXPIRATION_CHECK="*/10 * * * *"
-	PANEL_SYNC_CHECK="* * * * *"
-	TEAMSPEAK_CHECK="* * * * *"
-
-	PATH_TO_PARENT_DIR="/home/kali/Desktop/bash"
-
+PATH_TO_PARENT_DIR="/home/kali/Desktop/bash"
 EOF
 
 	
