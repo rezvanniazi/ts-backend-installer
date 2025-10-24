@@ -103,28 +103,28 @@ install_panel() {
 	cd /usr/local/
 
 	if [[ -e /usr/local/mtxpanel-linux-x64 ]]; then
-    cd mtxpanel-linux-x64
+    	cd mtxpanel-linux-x64
     
-    # Stop the service
-    systemctl stop mtxpanel
+    	# Stop the service
+    	systemctl stop mtxpanel
     
-    # Read variables from .env file
-    if [[ -f .env ]]; then
-        echo "Reading configuration from .env file..."
-        # Use the robust loading method
-        set -a
-        source .env
-        set +a
-        
-        backend_port="$PORT"
-        mysql_username="$MYSQL_USERNAME"
-        mysql_password="$MYSQL_PASSWORD"
-        mysql_database="$MYSQL_DATABASE"
-        mysql_host="$MYSQL_HOST"
-    else
-        echo "Error: .env file not found!"
-        exit 1
-    fi
+    	# Read variables from .env file
+		if [[ -f .env ]]; then
+			echo "Reading configuration from .env file..."
+			# Use the robust loading method
+			set -a
+			source .env
+			set +a
+			
+			backend_port="$PORT"
+			mysql_username="$MYSQL_USERNAME"
+			mysql_password="$MYSQL_PASSWORD"
+			mysql_database="$MYSQL_DATABASE"
+			mysql_host="$MYSQL_HOST"
+		else
+			echo "Error: .env file not found!"
+			exit 1
+		fi
     
 		cd ..
 		rm -rf mtxpanel-linux-x64
@@ -212,7 +212,7 @@ install_panel() {
 
 	PATH_TO_PARENT_DIR="/home/kali/Desktop/bash"
 
-	EOF
+EOF
 
 	
 	cp mtxpanel.service /etc/systemd/system/
