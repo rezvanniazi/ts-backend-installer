@@ -73,22 +73,22 @@ fi
 install_base() {
     case "${release}" in
     ubuntu | debian | armbian)
-        apt-get update && apt-get install -y -q wget curl tar mariadb-server redis-server certbot jq
+        apt-get update && apt-get install -y -q wget curl tar mariadb-server redis-server certbot openssl jq
         ;;
     centos | almalinux | rocky | ol)
-        yum -y update && yum install -y -q wget curl tar mariadb-server redis-server certbot jq
+        yum -y update && yum install -y -q wget curl tar mariadb-server redis-server certbot openssl jq
         ;;
     fedora | amzn | virtuozzo)
-        dnf -y update && dnf install -y -q wget curl tar mariadb-server  redis-server certbot jq
+        dnf -y update && dnf install -y -q wget curl tar mariadb-server  redis-server certbot openssl jq
         ;;
     arch | manjaro | parch)
-        pacman -Syu && pacman -Syu --noconfirm wget curl tar mariadb-server  redis-server certbot jq
+        pacman -Syu && pacman -Syu --noconfirm wget curl tar mariadb-server  redis-server certbot openssl jq
         ;;
     opensuse-tumbleweed)
-        zypper refresh && zypper -q install -y wget curl tar mariadb-server  redis-server certbot jq
+        zypper refresh && zypper -q install -y wget curl tar mariadb-server  redis-server certbot openssl jq
         ;;
     *)
-        apt-get update && apt install -y -q wget curl tar mariadb-server  redis-server certbot jq
+        apt-get update && apt install -y -q wget curl tar mariadb-server  redis-server certbot openssl jq
         ;;
     esac
 }
@@ -102,13 +102,30 @@ install_panel() {
 
 	cd /usr/local/
 
-	if ([[ -e /usr/local/mtxpanel-linux-x64 ]]); then
-		cd mtxpanel-linux-x64
-		systemctl stop mtxpanel
-		backend_port=$(grep 'port:' config.yml | awk -F': ' '{print $2}' | tr -d '"')
-		mysql_username=$(grep 'username:' config.yml | awk -F': ' '{print $2}' | tr -d '"')
-		mysql_password=$(grep 'password:' config.yml | awk -F': ' '{print $2}' | tr -d '"')
-		mysql_database=$(grep 'database:' config.yml | awk -F': ' '{print $2}' | tr -d '"')
+	if [[ -e /usr/local/mtxpanel-linux-x64 ]]; then
+    cd mtxpanel-linux-x64
+    
+    # Stop the service
+    systemctl stop mtxpanel
+    
+    # Read variables from .env file
+    if [[ -f .env ]]; then
+        echo "Reading configuration from .env file..."
+        # Use the robust loading method
+        set -a
+        source .env
+        set +a
+        
+        backend_port="$PORT"
+        mysql_username="$MYSQL_USERNAME"
+        mysql_password="$MYSQL_PASSWORD"
+        mysql_database="$MYSQL_DATABASE"
+        mysql_host="$MYSQL_HOST"
+    else
+        echo "Error: .env file not found!"
+        exit 1
+    fi
+    
 		cd ..
 		rm -rf mtxpanel-linux-x64
 	else
@@ -129,14 +146,14 @@ install_panel() {
 
 	# Verify token by making an authenticated API request
 	response=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer ${github_token}" \
-	"https://api.github.com/repos/rezvanniazi/ts-panel-backend2/releases/latest")
+	"https://api.github.com/repos/rezvanniazi/ts-panel-backend-express/releases/latest")
 
 	if [ "$response" -eq 200 ]; then
 		echo "✅ Token is valid. Proceeding..."
 		
 		# Get asset ID (original logic)
 		asset_id=$(curl -Ls -H "Authorization: Bearer ${github_token}" \
-		"https://api.github.com/repos/rezvanniazi/ts-panel-backend2/releases/latest" | \
+		"https://api.github.com/repos/rezvanniazi/ts-panel-backend-express/releases/latest" | \
 		jq -r '.assets[] | select(.name == "mtxpanel-linux-x64.tar.gz") | .id')
 
 		if [ -n "$asset_id" ]; then
@@ -155,7 +172,7 @@ install_panel() {
 		exit 1
 	fi
 
-	curl -L -H "Authorization: Bearer ${github_token}"   -H "Accept: application/octet-stream"   https://api.github.com/repos/rezvanniazi/ts-panel-backend2/releases/assets/${asset_id} --output mtxpanel-linux-x64.tar.gz
+	curl -L -H "Authorization: Bearer ${github_token}"   -H "Accept: application/octet-stream"   https://api.github.com/repos/rezvanniazi/ts-panel-backend-express/releases/assets/${asset_id} --output mtxpanel-linux-x64.tar.gz
 
 
 	if [[ $? -ne 0 ]]; then
@@ -175,16 +192,29 @@ install_panel() {
 	ln -s /etc/letsencrypt/live/$domain_name/fullchain.pem certs/
 	ln -s /etc/letsencrypt/live/$domain_name/privkey.pem certs/
 
-	sed -i "s/port: \"9686\"/port: \"$backend_port\"/g" config.yml
-	sed -i "s/host: \"localhost\"/host: \"$server_ipv4\"/g" config.yml
-	sed -i "s/username: \"temp\"/username: \"$mysql_username\"/g" config.yml
-	sed -i "s/password: \"temp\"/password: \"$mysql_password\"/g" config.yml
-	sed -i "s/database: \"temp\"/database: \"$mysql_database\"/g" config.yml
+	echo "Creating new .env configuration file..."
+	cat > /usr/local/mtxpanel-linux-x64/.env << EOF
+	NODE_ENV="production"
 
-	touch .env
+	PORT=$backend_port
+	JWT_SECRET=$(openssl rand -base64 32)
+	JWT_REFRESH=$(openssl rand -base64 32)
 
-	echo PATH_TO_PARENT_TS=/home/mtxpanel/server > .env
 
+	MYSQL_HOST="localhost"
+	MYSQL_USERNAME="$mysql_username"
+	MYSQL_PASSWORD="$mysql_password"
+	MYSQL_DATABASE="$mysql_database"
+
+	EXPIRATION_CHECK="*/10 * * * *"
+	PANEL_SYNC_CHECK="* * * * *"
+	TEAMSPEAK_CHECK="* * * * *"
+
+	PATH_TO_PARENT_DIR="/home/kali/Desktop/bash"
+
+	EOF
+
+	
 	cp mtxpanel.service /etc/systemd/system/
 
 	systemctl enable mtxpanel
