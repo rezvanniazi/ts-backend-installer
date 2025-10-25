@@ -121,6 +121,8 @@ install_panel() {
 			mysql_password="$MYSQL_PASSWORD"
 			mysql_database="$MYSQL_DATABASE"
 			mysql_host="$MYSQL_HOST"
+			jwt_secret="$JWT_SECRET"
+			jwt_refresh="$JWT_REFRESH"
 		else
 			echo "Error: .env file not found!"
 			exit 1
@@ -133,6 +135,9 @@ install_panel() {
 		read -p "lotfan user mysql ra vared konid: " mysql_username
 		read -p "lotfan password mysql ra vared konid: " mysql_password
 		read -p "lotfan esm database mysql ra vared konid: " mysql_database
+
+		jwt_secret=$(openssl rand -base64 32)
+		jwt_refresh=$(openssl rand -base64 32)
 	fi
 
 	mysql -e "drop USER '${mysql_username}'@'localhost'" &
@@ -196,8 +201,8 @@ cat > /usr/local/mtxpanel-linux-x64/.env << EOF
 NODE_ENV="production"
 
 PORT=$backend_port
-JWT_SECRET=$(openssl rand -base64 32)
-JWT_REFRESH=$(openssl rand -base64 32)
+JWT_SECRET=$jwt_secret
+JWT_REFRESH=$jwt_refresh
 
 MYSQL_HOST="localhost"
 MYSQL_USERNAME="$mysql_username"
