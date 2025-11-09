@@ -229,6 +229,8 @@ EOF
 	if [ "$is_update" = true ]; then
 		echo -e "${green}Updating database with differences.sql...${plain}"
 		wget https://raw.githubusercontent.com/rezvanniazi/ts-backend-installer/main/differences.sql -O differences.sql
+		wait
+
 		if [[ -f differences.sql ]]; then
 
 			mysql -u "$mysql_username" -p"$mysql_password" "$mysql_database" < differences.sql
