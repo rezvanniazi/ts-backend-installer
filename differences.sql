@@ -10,7 +10,7 @@ CREATE TABLE `Tokens` (
   `user_id` int(11) NOT NULL,
   `token` varchar(255) NOT NULL,
   `expires_at` datetime DEFAULT NULL,
-  `created_at` datetime NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `token` (`token`),
   KEY `user_id` (`user_id`),
@@ -18,7 +18,7 @@ CREATE TABLE `Tokens` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- Sync table: AudioBots
-ALTER TABLE `AudioBots` MODIFY COLUMN `created` datetime NOT NULL;
+ALTER TABLE `AudioBots` MODIFY COLUMN `created` datetime NOT NULL DEFAULT current_timestamp();
 ALTER TABLE `AudioBots` DROP COLUMN `bot_server_port`;
 
 -- Sync table: BotPackages
@@ -60,7 +60,7 @@ ALTER TABLE `Servers` MODIFY COLUMN `package_name` varchar(45) DEFAULT NULL;
 
 -- Sync table: Users
 ALTER TABLE `Users` MODIFY COLUMN `password` blob NOT NULL;
-ALTER TABLE `Users` MODIFY COLUMN `created` datetime NOT NULL;
+ALTER TABLE `Users` MODIFY COLUMN `created` datetime NOT NULL DEFAULT current_timestamp();
 ALTER TABLE `Users` MODIFY COLUMN `balance` int(11) NOT NULL DEFAULT 0;
 ALTER TABLE `Users` MODIFY COLUMN `company_name` varchar(45) DEFAULT NULL;
 
