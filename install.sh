@@ -104,7 +104,9 @@ install_panel() {
 
 	if [[ -e /usr/local/mtxpanel-linux-x64 ]]; then
     	cd mtxpanel-linux-x64
-    
+
+		mv logs/ /tmp/logs_backup
+
     	# Stop the service
     	systemctl stop mtxpanel
     
@@ -186,6 +188,8 @@ install_panel() {
     fi
 	
 	mkdir -p mtxpanel-linux-x64
+
+	mv /tmp/logs_backup mtxpanel-linux-x64/logs 2>/dev/null || true
 
 	tar -xvzf mtxpanel-linux-x64.tar.gz -C mtxpanel-linux-x64
 	wait
