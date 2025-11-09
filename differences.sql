@@ -15,7 +15,7 @@ CREATE TABLE `Tokens` (
   UNIQUE KEY `token` (`token`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `Tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Sync table: AudioBots
 ALTER TABLE `AudioBots` MODIFY COLUMN `created` datetime NOT NULL DEFAULT current_timestamp();
