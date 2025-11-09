@@ -102,10 +102,16 @@ install_panel() {
 
 	cd /usr/local/
 
+	# Initialize is_update as false by default
+	is_update=false
+
 	if [[ -e /usr/local/mtxpanel-linux-x64 ]]; then
+
+		is_update=true
+
     	cd mtxpanel-linux-x64
 
-		mv logs/ /tmp/logs_backup
+		mv logs/ /tmp/logs_backup 2>/dev/null || true
 
     	# Stop the service
     	systemctl stop mtxpanel
@@ -142,11 +148,10 @@ install_panel() {
 		jwt_refresh=$(openssl rand -base64 32)
 	fi
 
-	mysql -e "drop USER '${mysql_username}'@'localhost'" &
-	wait
-	mysql -e "CREATE USER '${mysql_username}'@'localhost' IDENTIFIED BY '${mysql_password}';" &
-	wait
-	mysql -e "GRANT ALL ON *.* TO '${mysql_username}'@'localhost';" &
+	mysql -e "drop USER '${mysql_username}'@'localhost'" 2>/dev/null || true
+	mysql -e "CREATE USER '${mysql_username}'@'localhost' IDENTIFIED BY '${mysql_password}';"
+	mysql -e "GRANT ALL ON *.* TO '${mysql_username}'@'localhost';"
+	mysql -e "FLUSH PRIVILEGES;"
 
 
 	read -p "Lotfan Token Github ra vared konid: " github_token
@@ -217,16 +222,54 @@ EXPIRATION_CHECK="*/10 * * * *"
 PANEL_SYNC_CHECK="* * * * *"
 TEAMSPEAK_CHECK="* * * * *"
 
-PATH_TO_PARENT_DIR="/home/kali/Desktop/bash"
+PATH_TO_PARENT_DIR="/home/mtxpanel/server"
 EOF
 
-	
+	# Run appropriate SQL file based on update status
+	if [ "$is_update" = true ]; then
+		echo -e "${green}Updating database with differences.sql...${plain}"
+		if [[ -f differences.sql ]]; then
+			wget https://raw.githubusercontent.com/rezvanniazi/ts-backend-installer/main/differences.sql -O differences.sql
+
+			mysql -u "$mysql_username" -p"$mysql_password" "$mysql_database" < differences.sql
+			if [[ $? -eq 0 ]]; then
+				echo -e "${green}Database updated successfully!${plain}"
+			else
+				echo -e "${red}Error updating database!${plain}"
+				exit 1
+			fi
+		else
+			echo -e "${red}Error: differences.sql not found!${plain}"
+			exit 1
+		fi
+	else
+		echo -e "${green}Installing fresh database with schema.sql...${plain}"
+		# Create database if it doesn't exist
+		wget https://raw.githubusercontent.com/rezvanniazi/ts-backend-installer/main/schema.sql -O schema.sql
+
+		mysql -u "$mysql_username" -p"$mysql_password" -e "CREATE DATABASE IF NOT EXISTS $mysql_database;"
+		
+		if [[ -f schema.sql ]]; then
+			mysql -u "$mysql_username" -p"$mysql_password" "$mysql_database" < schema.sql
+			if [[ $? -eq 0 ]]; then
+				echo -e "${green}Database installed successfully!${plain}"
+			else
+				echo -e "${red}Error installing database!${plain}"
+				exit 1
+			fi
+		else
+			echo -e "${red}Error: schema.sql not found!${plain}"
+			exit 1
+		fi
+	fi
+
 	cp mtxpanel.service /etc/systemd/system/
 
-	systemctl enable mtxpanel
-	systemctl start mtxpanel
+	# systemctl daemon-reload
+	# systemctl enable mtxpanel
+	# systemctl start mtxpanel
 
-	if ([[ -e /home/mtxpanel/server ]]); then
+	if [[ -e /home/mtxpanel/server ]]; then
 		echo "Server Folder Already Exists"
 	else
 		mkdir -p /home/mtxpanel
@@ -256,6 +299,3 @@ echo -e "${green}Running...${plain}"
 
 install_base
 install_panel
-
-
-
