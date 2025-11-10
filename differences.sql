@@ -5,7 +5,7 @@
 SET FOREIGN_KEY_CHECKS=0;
 
 -- Create table from production
-CREATE TABLE `Tokens` (
+CREATE TABLE IF NOT EXISTS `Tokens` (
   `id` varchar(45) NOT NULL,
   `user_id` int(11) NOT NULL,
   `token` varchar(255) NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE `Tokens` (
 
 -- Sync table: AudioBots
 ALTER TABLE `AudioBots` MODIFY COLUMN `created` datetime NOT NULL DEFAULT current_timestamp();
-ALTER TABLE `AudioBots` DROP COLUMN `bot_server_port`;
+ALTER TABLE `AudioBots` DROP COLUMN IF EXISTS `bot_server_port`;
 
 -- Sync table: BotPackages
 
@@ -35,17 +35,17 @@ ALTER TABLE `CompanyLists` MODIFY COLUMN `domain_ip` varchar(45) NOT NULL DEFAUL
 -- Sync table: Radios
 
 -- Sync table: RanksystemSettings
-ALTER TABLE `RanksystemSettings` ADD COLUMN `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY;
-ALTER TABLE `RanksystemSettings` DROP COLUMN `da_url`;
-ALTER TABLE `RanksystemSettings` DROP COLUMN `da_username`;
-ALTER TABLE `RanksystemSettings` DROP COLUMN `da_password`;
+ALTER TABLE `RanksystemSettings` ADD COLUMN IF NOT EXISTS `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY;
+ALTER TABLE `RanksystemSettings` DROP COLUMN IF EXISTS `da_url`;
+ALTER TABLE `RanksystemSettings` DROP COLUMN IF EXISTS`da_username`;
+ALTER TABLE `RanksystemSettings` DROP COLUMN IF EXISTS `da_password`;
 
 -- Sync table: Ranksystems
-ALTER TABLE `Ranksystems` ADD COLUMN `created` datetime NOT NULL DEFAULT current_timestamp();
-ALTER TABLE `Ranksystems` ADD COLUMN `author` varchar(45) NOT NULL;
-ALTER TABLE `Ranksystems` ADD COLUMN `state` varchar(45) NOT NULL DEFAULT 'active';
-ALTER TABLE `Ranksystems` ADD COLUMN `status` varchar(45) NOT NULL DEFAULT 'offline';
-ALTER TABLE `Ranksystems` ADD COLUMN `information` text DEFAULT NULL;
+ALTER TABLE `Ranksystems` ADD COLUMN IF NOT EXISTS `created` datetime NOT NULL DEFAULT current_timestamp();
+ALTER TABLE `Ranksystems` ADD COLUMN IF NOT EXISTS `author` varchar(45) NOT NULL;
+ALTER TABLE `Ranksystems` ADD COLUMN IF NOT EXISTS `state` varchar(45) NOT NULL DEFAULT 'active';
+ALTER TABLE `Ranksystems` ADD COLUMN IF NOT EXISTS `status` varchar(45) NOT NULL DEFAULT 'offline';
+ALTER TABLE `Ranksystems` ADD COLUMN IF NOT EXISTS `information` text DEFAULT NULL;
 
 -- Sync table: RefreshTokens
 
